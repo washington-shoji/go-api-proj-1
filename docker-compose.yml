@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  # This is the configuration for our PostgreSQL database container
+  # Note the `postgres` name is important, in our Go app when we refer
+  # to  `host: "postgres"` that value is mapped on the network to the
+  # address of this container.
+  postgres:
+    container_name: postgres
+    image: postgres:15.3-alpine3.18
+    environment:
+      # You can set the value of environment variables
+      # in your docker-compose.yml file
+      # Our Node app will use these to connect
+      # to the database
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 1s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    ports:
+      # Standard port for PostgreSQL databases
+      - '5432:5432'
+    volumes:
+      # When the PostgresSQL container is started it will run any scripts
+      # provided in the `docker-entrypoint-initdb.d` directory, this connects
+      - progresDB:/var/lib/postgresql/data
+  pgadmin-compose:
+    container_name: pgadmin-compose
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - '16543:80'
+    volumes:
+      - pgAdmin:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+volumes:
+  progresDB:
+  pgAdmin:
