@@ -14,6 +14,7 @@ func SetupRoutes(app *fiber.App) {
 
 	user := api.Group("/user")
 	book := api.Group("/book")
+	author := api.Group("/author")
 
 	// routes
 	user.Get("/", handler.GetAllUsers)
@@ -27,5 +28,8 @@ func SetupRoutes(app *fiber.App) {
 	book.Post("/", handler.CreateBook)
 	book.Put("/:id", handler.UpdateBook)
 	book.Delete("/:id", handler.DeleteBookByID)
+
+	author.Get("/", handler.GetAllAuthors)
+	author.Post("/", handler.CreateAuthor)
 
 }
