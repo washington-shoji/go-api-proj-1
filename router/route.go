@@ -9,16 +9,23 @@ import (
 // SetupRoutes func
 func SetupRoutes(app *fiber.App) {
 
- // grouping
- api := app.Group("/api")
+	// grouping
+	api := app.Group("/api")
 
- v1 := api.Group("/user")
+	user := api.Group("/user")
+	book := api.Group("/book")
 
- // routes
- v1.Get("/", handler.GetAllUsers)
- v1.Get("/:id", handler.GetSingleUser)
- v1.Post("/", handler.CreateUser)
- v1.Put("/:id", handler.UpdateUser)
- v1.Delete("/:id", handler.DeleteUserByID)
- 
+	// routes
+	user.Get("/", handler.GetAllUsers)
+	user.Get("/:id", handler.GetSingleUser)
+	user.Post("/", handler.CreateUser)
+	user.Put("/:id", handler.UpdateUser)
+	user.Delete("/:id", handler.DeleteUserByID)
+
+	book.Get("/", handler.GetAllBooks)
+	book.Get("/:id", handler.GetSingleBook)
+	book.Post("/", handler.CreateBook)
+	book.Put("/:id", handler.UpdateBook)
+	book.Delete("/:id", handler.DeleteBookByID)
+
 }
