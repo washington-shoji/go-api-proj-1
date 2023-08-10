@@ -11,20 +11,20 @@ import (
 
 func main() {
 
- database.Connect()
+	database.Connect()
 
- app := fiber.New()
+	app := fiber.New()
 
- app.Use(logger.New())
+	app.Use(logger.New())
 
- app.Use(cors.New())
+	app.Use(cors.New())
 
- router.SetupRoutes(app)
+	router.SetupRoutes(app)
 
- // handle unavailable route
- app.Use(func(c *fiber.Ctx) error {
-  return c.SendStatus(404) // => 404 "Not Found"
- })
+	// handle unavailable route
+	app.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(404) // => 404 "Not Found"
+	})
 
- app.Listen(":8080")
+	app.Listen(":8181")
 }
