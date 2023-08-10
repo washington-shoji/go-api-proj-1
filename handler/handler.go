@@ -153,11 +153,12 @@ func GetSingleBook(c *fiber.Ctx) error {
 
 // update a book in db
 func UpdateBook(c *fiber.Ctx) error {
-	type updateBook struct {
-		Title       string `json:"title"`
-		Subtitle    string `json:"subtitle"`
-		Description string `json:"description"`
-	}
+	// type updateBook struct {
+	// 	Title       string       `json:"title"`
+	// 	Subtitle    string       `json:"subtitle"`
+	// 	Description string       `json:"description"`
+	// 	Author      model.Author `json:"author"`
+	// }
 	db := database.DB.Db
 	var book model.Book
 	// get id params
@@ -167,14 +168,15 @@ func UpdateBook(c *fiber.Ctx) error {
 	if book.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Book not found", "data": nil})
 	}
-	var updateBookData updateBook
-	err := c.BodyParser(&updateBookData)
+	//var updateBookData updateBook
+	err := c.BodyParser(&book)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
-	book.Title = updateBookData.Title
-	book.Subtitle = updateBookData.Subtitle
-	book.Description = updateBookData.Description
+	// book.Title = updateBookData.Title
+	// book.Subtitle = updateBookData.Subtitle
+	// book.Description = updateBookData.Description
+	// book.Author = updateBookData.Author
 	// Save the Changes
 	db.Save(&book)
 	// Return the updated book
@@ -197,4 +199,36 @@ func DeleteBookByID(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Failed to delete book", "data": nil})
 	}
 	return c.Status(200).JSON(fiber.Map{"status": "success", "message": "Book deleted"})
+}
+
+// Create a user
+func CreateAuthor(c *fiber.Ctx) error {
+	db := database.DB.Db
+	author := new(model.Author)
+	// Store the body in the user and return error if encountered
+	err := c.BodyParser(author)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
+	}
+	err = db.Create(&author).Error
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create author", "data": err})
+	}
+	// Return the created author
+	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Author has created", "data": author})
+}
+
+// Get All Users from db
+func GetAllAuthors(c *fiber.Ctx) error {
+	db := database.DB.Db
+	var authors []model.Author
+	// find all users in the database
+	db.Find(&authors)
+	// If no user found, return an error
+	if len(authors) == 0 {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Authors not found", "data": nil})
+	}
+	// return users
+	return c.Status(200).JSON(fiber.Map{"status": "sucess", "message": "Authors Found", "data": authors})
 }
