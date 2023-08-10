@@ -58,6 +58,8 @@ func GetSingleUser(c *fiber.Ctx) error {
 func UpdateUser(c *fiber.Ctx) error {
 	type updateUser struct {
 		Username string `json:"username"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 	db := database.DB.Db
 	var user model.User
@@ -74,6 +76,8 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 	user.Username = updateUserData.Username
+	user.Email = updateUserData.Email
+	user.Password = updateUserData.Password
 	// Save the Changes
 	db.Save(&user)
 	// Return the updated user
@@ -150,7 +154,9 @@ func GetSingleBook(c *fiber.Ctx) error {
 // update a book in db
 func UpdateBook(c *fiber.Ctx) error {
 	type updateBook struct {
-		Title string `json:"title"`
+		Title       string `json:"title"`
+		Subtitle    string `json:"subtitle"`
+		Description string `json:"description"`
 	}
 	db := database.DB.Db
 	var book model.Book
@@ -167,6 +173,8 @@ func UpdateBook(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
 	}
 	book.Title = updateBookData.Title
+	book.Subtitle = updateBookData.Subtitle
+	book.Description = updateBookData.Description
 	// Save the Changes
 	db.Save(&book)
 	// Return the updated book
