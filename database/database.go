@@ -45,7 +45,12 @@ func Connect() {
 	db.Logger = logger.Default.LogMode(logger.Info)
 	log.Println("running migrations")
 	// Run auto gorm migration
-	db.AutoMigrate(&model.User{}, &model.Book{}, &model.Author{})
+	db.AutoMigrate(
+		&model.User{},
+		&model.Publisher{},
+		&model.Author{}, 
+		&model.Book{}, 
+	)
 	if err != nil {
 		log.Fatal("Failed to migrate. \n", err)
 	}
