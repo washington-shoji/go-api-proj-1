@@ -7,9 +7,8 @@ import (
 
 type Author struct {
 	gorm.Model
-	ID   	uuid.UUID `gorm:"type:uuid"`
-	Name 	string    `json:"name"`
-	Books   []Book    `gorm:"many2many:author_books;" json:"books"`
+	ID   uuid.UUID `gorm:"type:uuid"`
+	Name string    `json:"name"`
 }
 
 // Books struct

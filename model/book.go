@@ -8,12 +8,14 @@ import (
 // Book struct
 type Book struct {
 	gorm.Model
-	ID          	uuid.UUID `gorm:"type:uuid;"`
-	Title       	string    `json:"title"`
-	Subtitle    	string    `json:"subtitle"`
-	DatePublished 	string    `json:"year"`
-	Description 	string    `json:"description"`
-	PublisherId 	string    `json:"publisherId"`
+	ID          uuid.UUID `gorm:"type:uuid;"`
+	Title       string    `json:"title"`
+	Subtitle    string    `json:"subtitle"`
+	Description string    `json:"description"`
+	AuthorID    uuid.UUID ``
+	Author      Author    `gorm:"foreignKey:AuthorID;"`
+	PublisherID uuid.UUID ``
+	Publisher   Publisher `gorm:"foreignKey:PublisherID;"`
 }
 
 // Books struct
