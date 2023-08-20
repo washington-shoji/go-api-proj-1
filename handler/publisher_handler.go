@@ -31,7 +31,7 @@ func GetAllPublishers(c *fiber.Ctx) error {
 	db := database.DB.Db
 	var publisher []model.Publisher
 	// find all publishers in the database
-	db.Find(&publisher)
+	db.Preload("Books").Find(&publisher)
 	// If no publisher found, return an error
 	if len(publisher) == 0 {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Publisher not found", "data": nil})
