@@ -31,7 +31,7 @@ func GetAllAuthors(c *fiber.Ctx) error {
 	db := database.DB.Db
 	var authors []model.Author
 	// find all users in the database
-	db.Find(&authors)
+	db.Preload("Books").Find(&authors)
 	// If no user found, return an error
 	if len(authors) == 0 {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Authors not found", "data": nil})
