@@ -7,8 +7,10 @@ import (
 
 type Author struct {
 	gorm.Model
-	ID   uuid.UUID `gorm:"type:uuid"`
-	Name string    `json:"name"`
+	ID        uuid.UUID `gorm:"type:uuid; index:unique"`
+	Name      string    `gorm:"primary_key; index:unique" json:"name"`
+	BookTitle string    `json:"book-title"`
+	Books     []Book    `gorm:"foreignKey:Title; references:BookTitle"`
 }
 
 // Books struct
