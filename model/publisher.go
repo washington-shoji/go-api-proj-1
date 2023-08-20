@@ -8,8 +8,10 @@ import (
 // Publisher struct
 type Publisher struct {
 	gorm.Model
-	ID   uuid.UUID `gorm:"type:uuid;"`
-	Name string    `json:"name"`
+	ID        uuid.UUID `gorm:"primary_key; type:uuid; index:unique"`
+	Name      string    `gorm:"primary_key; index:unique" json:"name"`
+	BookTitle string    `json:"book-title"`
+	Books     []Book    `gorm:"foreignKey:Title; references:BookTitle"`
 }
 
 // Publishers struct
