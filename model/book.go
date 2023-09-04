@@ -6,12 +6,22 @@ import (
 )
 
 // Book struct
+// type Book struct {as
+// 	gorm.Model
+// 	ID          uuid.UUID `gorm:"type:uuid; index:unique"`
+// 	Title       string    `gorm:"primary_key; index:unique" json:"title"`
+// 	Subtitle    string    `json:"subtitle"`
+// 	Description string    `json:"description"`
+// }
+
 type Book struct {
 	gorm.Model
-	ID          uuid.UUID `gorm:"type:uuid; index:unique"`
-	Title       string    `gorm:"primary_key; index:unique" json:"title"`
+	ID          uuid.UUID `gorm:"primary_key; type:uuid"`
+	Title       string    `gorm:"index:unique" json:"title"`
 	Subtitle    string    `json:"subtitle"`
 	Description string    `json:"description"`
+	PublisherID uuid.UUID `json:"publisher-id"`
+	Authors     []Author  `gorm:"many2many:author_books;"`
 }
 
 // Books struct

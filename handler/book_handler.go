@@ -10,22 +10,44 @@ import (
 
 // Create a book
 func CreateBook(c *fiber.Ctx) error {
+	// Struck to pass json data for querying and updating associations
+	type createBook struct {
+		Title       string         `json:"title"`
+		Subtitle    string         `json:"subtitle"`
+		Description string         `json:"description"`
+		PublisherID uuid.UUID      `json:"publisher-id"`
+		Authors     []model.Author ``
+		AuthorName  string         `json:"author-name"`
+	}
 	db := database.DB.Db
+	createBookData := new(createBook)
+	createBookErr := c.BodyParser(createBookData)
+	if createBookErr != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": createBookErr})
+	}
+	author := new(model.Author)
 	book := new(model.Book)
-	// Store the body in the book and return error if encountered
-	err := c.BodyParser(book)
-
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Something's wrong with your input", "data": err})
+	db.Find(&author, "name = ?", createBookData.AuthorName).First(&author)
+	if author.ID == uuid.Nil {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Author not found", "data": nil})
 	}
 
-	err = db.Create(&book).Error
+	// Mapping json data to book and author model for record
+	book.Title = createBookData.Title
+	book.Subtitle = createBookData.Subtitle
+	book.Description = createBookData.Description
+	book.PublisherID = createBookData.PublisherID
+	book.Authors = []model.Author{*author}
+	author.Books = []model.Book{*book}
+
+	// Store the body in the book, update author and append book and return error if encountered
+	err := db.Model(&author).Association("Books").Append(&book)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create book", "data": err})
 	}
 
-	// Return the created user
+	// Return the created Book
 	return c.Status(201).JSON(fiber.Map{"status": "success", "message": "Book has created", "data": book})
 }
 
@@ -34,7 +56,7 @@ func GetAllBooks(c *fiber.Ctx) error {
 	db := database.DB.Db
 	var books []model.Book
 	// find all books in the database
-	db.Find(&books)
+	db.Preload("Authors").Find(&books)
 	// If no book found, return an error
 	if len(books) == 0 {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Books not found", "data": nil})
